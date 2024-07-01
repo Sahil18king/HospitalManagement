@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Add Medicine</title>
+
+    <!-- css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <!-- boxed bg -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- template skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS for form -->
+    <style>
+        .form-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-container label {
+            margin-bottom: 5px;
+        }
+        .form-container input, .form-container select, .form-container button {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-container select {
+            padding: 6px;
+            height: auto; /* Adjust height to fit content */
+        }
+        .form-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .table-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table-container th, .table-container td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .table-container th {
+            background-color: #f9f9f9;
+        }
+        .table-container td input {
+            width: 100%;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1>Add Medicine</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price:</label>
+                    <input type="text" class="form-control" id="price" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select id="category" class="form-control" name="category" required>
+                        <option value="LIQUID">Liquid</option>
+                        <option value="SOLID">Solid</option>
+                        <option value="TUBE">Tube</option>
+                        <option value="POWDER">Powder</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Add Medicine</button>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <h2>Medicine List</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicine in medicines %}
+                        <tr>
+                            <form method="post" action="{% url 'update_medicine' medicine.id %}">
+                                {% csrf_token %}
+                                <td>{{ medicine.name }}</td>
+                                <td><input type="text" name="price" value="{{ medicine.price }}"></td>
+                                <td><input type="number" name="quantity" value="{{ medicine.quantity }}"></td>
+                                <td>{{ medicine.get_category_display }}</td>
+                                <td><button type="submit" class="btn btn-success">Update</button></td>
+                            </form>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

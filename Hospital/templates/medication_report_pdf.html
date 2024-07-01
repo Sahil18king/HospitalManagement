@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Medication Report</title>
+    <style>
+        /* Define your PDF styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h2 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Medication Report for {{ patient.username }}</h2>
+
+    <h3>Personal Information</h3>
+    <table>
+        <tbody>
+            <tr><th>Username:</th><td>{{ patient.username }}</td></tr>
+            <tr><th>Email:</th><td>{{ patient.email }}</td></tr>
+            <tr><th>First Name:</th><td>{{ patient.first_name }}</td></tr>
+            <tr><th>Last Name:</th><td>{{ patient.last_name }}</td></tr>
+            <!-- Include other patient information as needed -->
+        </tbody>
+    </table>
+
+    <h3>Medication Details</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Medicine</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Time Schedule</th>
+                <!-- Add more headers if necessary -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for medication in medications %}
+            <tr>
+                <td>{{ medication.medicine }}</td>
+                <td>{{ medication.description }}</td>
+                <td>{{ medication.quantity }}</td>
+                <td>{{ medication.time_schedule }}</td>
+                <!-- Include other medication details as needed -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Appointments</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time Slot</th>
+                <th>Doctor</th>
+                <!-- Add more headers if necessary -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.date }}</td>
+                <td>{{ appointment.time_slot }}</td>
+                <td>{{ appointment.doctor.fname }} {{ appointment.doctor.lname }}</td>
+                <!-- Include other appointment details as needed -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

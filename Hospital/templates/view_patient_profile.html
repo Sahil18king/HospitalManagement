@@ -1,0 +1,201 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Profile</title>
+    <!-- css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <!-- boxed bg -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- template skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Patient Profile</h1>
+        <table class="table table-bordered">
+            <tbody>
+                <!-- Patient Info Rows -->
+                <tr><th>Username:</th><td>{{ patient.username }}</td></tr>
+                <tr><th>Email:</th><td>{{ patient.email }}</td></tr>
+                <tr><th>First Name:</th><td>{{ patient.first_name }}</td></tr>
+                <tr><th>Last Name:</th><td>{{ patient.last_name }}</td></tr>
+                <tr><th>Blood Pressure:</th><td>{{ patient.blood_pressure }}</td></tr>
+                <tr><th>Sugar Level:</th><td>{{ patient.sugar_level }}</td></tr>
+                <tr><th>Blood Group:</th><td>{{ patient.blood_group }}</td></tr>
+                <tr><th>Gender:</th><td>{{ patient.gender }}</td></tr>
+                <tr><th>Phone Number:</th><td>{{ patient.phone_number }}</td></tr>
+                <tr><th>Weight:</th><td>{{ patient.weight }}</td></tr>
+                <tr><th>Height:</th><td>{{ patient.height }}</td></tr>
+                <tr><th>Smoking Status:</th><td>{{ patient.smoking_status }}</td></tr>
+                <tr><th>Alcohol Use:</th><td>{{ patient.alcohol_use }}</td></tr>
+                <tr><th>Has Insurance:</th><td>{{ patient.has_insurance }}</td></tr>
+            </tbody>
+        </table>
+
+        <h2>Medication Details</h2>
+        <form id="medication-form" method="post">
+            {% csrf_token %}
+            <div id="medications-container">
+                <div class="medication-entry">
+                    <div class="form-group">
+                        <label for="medicine">Medicine:</label>
+                        <select class="form-control medicine" name="medicine">
+                            {% for medicine in medicines %}
+                                <option value="{{ medicine.id }}" data-price="{{ medicine.price }}">{{ medicine.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control description" name="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" class="form-control quantity" name="quantity" min="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="total-price">Total Price:</label>
+                        <input type="text" class="form-control total-price" name="total_price" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="time-schedule">Time Schedule:</label>
+                        <input type="text" class="form-control time-schedule" name="time_schedule" placeholder="e.g., 1-0-1">
+                    </div>
+                    <div class="form-group">
+                        <label for="appointment-date">Appointment Date:</label>
+                        <input type="text" class="form-control appointment-date" name="appointment_date" value="{{ appointment_date }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="admit">Admit:</label>
+                        <select class="form-control admit" name="admit">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    <div class="form-group room-type-group" style="display: none;">
+                        <label for="room">Select Room:</label>
+                        <select class="form-control room" name="room">
+                            {% for room in rooms %}
+                                <option value="{{ room.id }}" data-price="{{ room.price }}" data-type="{{ room.get_type_of_room_display }}">{{ room.get_type_of_room_display }} - {{ room.price }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="button" id="add-medication" class="btn btn-secondary" style="background-color: #428bca;">Add More</button>
+            <button type="submit" class="btn btn-primary">Done</button>
+        </form>
+
+        <!-- Button to show previous appointments -->
+        <a href="{% url 'previous_appointments' patient.email %}" class="btn btn-info mt-3">Previous Appointments</a>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function updateTotalPrice(entry) {
+                var quantity = parseInt(entry.find('.quantity').val());
+                var price = parseFloat(entry.find('.medicine option:selected').data('price'));
+                var totalPrice = quantity * price;
+
+                if (!isNaN(totalPrice)) {
+                    entry.find('.total-price').val(totalPrice.toFixed(2));
+                } else {
+                    entry.find('.total-price').val('');
+                }
+            }
+
+            $(document).on('input', '.quantity', function() {
+                var entry = $(this).closest('.medication-entry');
+                updateTotalPrice(entry);
+            });
+
+            $(document).on('change', '.medicine', function() {
+                var entry = $(this).closest('.medication-entry');
+                updateTotalPrice(entry);
+            });
+
+            $('#add-medication').click(function() {
+                var newEntry = $('.medication-entry:first').clone();
+                newEntry.find('textarea, input').val('');
+                newEntry.find('.total-price').val('');
+                newEntry.find('.room-type-group').hide(); // Hide the room type group for new entries
+                $('#medications-container').append(newEntry);
+            });
+
+            $(document).on('change', '.admit', function() {
+                var entry = $(this).closest('.medication-entry');
+                if ($(this).val() === 'yes') {
+                    entry.find('.room-type-group').show();
+                } else {
+                    entry.find('.room-type-group').hide();
+                }
+            });
+
+            $('.medication-entry').each(function() {
+                updateTotalPrice($(this));
+            });
+
+            // // Function to mark appointment as done and remove from view
+            // function markAppointmentDone(appointmentId) {
+            //     $.ajax({
+            //         url: '{% url "mark_appointment_done" %}',
+            //         method: 'POST',
+            //         data: {
+            //             'appointment_id': appointmentId,
+            //             'csrfmiddlewaretoken': '{{ csrf_token }}'
+            //         },
+            //         success: function(response) {
+            //             if (response.status === 'success') {
+            //                 $('#appointment-' + appointmentId).remove();  // Remove from view
+            //                 alert('Appointment marked as done and removed from view.');
+            //             } else {
+            //                 alert(response.message);
+            //             }
+            //         },
+            //         error: function(xhr, status, error) {
+            //             alert('Error marking appointment as done: ' + error);
+            //         }
+            //     });
+            // }
+
+            // $('.btn-done').click(function() {
+            //     var appointmentId = $(this).data('id');
+            //     markAppointmentDone(appointmentId);
+            // });
+
+            // $('#medication-form').submit(function(e) {
+            //     e.preventDefault();
+            //     var form = $(this);
+            //     $.ajax({
+            //         url: form.attr('action'),
+            //         method: form.attr('method'),
+            //         data: form.serialize(),
+            //         success: function(response) {
+            //             // Handle success response if needed
+            //             alert('Medication details saved successfully.');
+            //             window.location.href = '{% url "home" %}';  // Redirect to home after saving
+            //         },
+            //         error: function(xhr, status, error) {
+            //             alert('Error saving medication details: ' + error);
+            //         }
+            //     });
+            // });
+        });
+    </script>
+</body>
+</html>
+
+
+

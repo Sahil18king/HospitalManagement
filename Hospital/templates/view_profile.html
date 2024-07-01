@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>View Profile</title>
+    <style>
+        .containerr {
+            margin-top: 200px;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {background-color: #f1f1f1}
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+    <!-- css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <!-- boxed bg -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- template skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
+
+    <div id="wrapper">
+
+        <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+            <div class="top-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            <p class="bold text-left">Monday - Saturday, 8am to 10pm </p>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <p class="bold text-right">Call us now +62 008 65 001</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container navigation">
+
+                <div class="navbar-header page-scroll">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target=".navbar-main-collapse">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="index.html">
+                        <img src="{% static 'img/Bharatlogo.png' %}" alt="" height="55" />
+                    </a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#intro">Home</a></li>
+
+                        <li><a href="#doctor">Doctors</a></li>
+                        <li><a href="#facilities">Facilities</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                                    class="badge custom-badge red pull-right">Extra</span>More <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="index.html">Home form</a></li>
+                                <li><a href="index-video.html">Home video</a></li>
+                                <li><a href="index-cta.html">Home CTA</a></li>
+                                <li><a href="https://bootstrapmade.com">Download</a></li>
+                            </ul>
+                        </li>
+                        {% if user.is_superuser %}
+						<li><a href="{% url 'view_profile' 'Doctor' %}">View Profile</a></li>
+						{% endif %}
+
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                        {% else %}
+                        <li><a href="{% url 'signup' %}">Signup</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container -->
+        </nav>
+    </div>
+
+    <div class="containerr">
+        <div class="dropdown">
+            <h4>Filter by Type</h4>
+            <div class="dropdown-content">
+                <a href="{% url 'view_profile' 'Doctor' %}">Doctors</a>
+                <a href="{% url 'view_profile' 'Nurse' %}">Nurses</a>
+                <a href="{% url 'view_profile' 'OT Member' %}">OT Member</a>
+                <a href="{% url 'view_profile' 'staff' %}">All</a>
+            </div>
+        </div>
+        <h2>Staff Members - {{ staff_type|capfirst }}</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Number</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff in staff_members %}
+                    <tr>
+                        <td>{{ staff.username }}</td>
+                        <td>{{ staff.fname }}</td>
+                        <td>{{ staff.lname }}</td>
+                        <td>{{ staff.email }}</td>
+                        <td>{{ staff.department }}</td>
+                        <td>{{ staff.number }}</td>
+                        <td>{{ staff.type }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'add_staff_view' %}" class="btn btn-primary">Add Staff</a>
+        
+    </div>
+</body>
+</html>
+
+
+
+   

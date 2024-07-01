@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Previous Appointments</title>
+    <!-- CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <!-- Boxed BG -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- Template Skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Previous Appointments for {{ patient.first_name }} {{ patient.last_name }}</h1>
+        {% if previous_medications_by_date %}
+            {% for date, medications in previous_medications_by_date.items %}
+                <h3>Appointment Date: {{ date }}</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                            <th>Time Schedule</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medication in medications %}
+                            <tr>
+                                <td>{{ medication.medicine.name }}</td>
+                                <td>{{ medication.description }}</td>
+                                <td>{{ medication.quantity }}</td>
+                                <td>{{ medication.total_price }}</td>
+                                <td>{{ medication.time_schedule }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
+        {% else %}
+            <p>No previous appointments found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

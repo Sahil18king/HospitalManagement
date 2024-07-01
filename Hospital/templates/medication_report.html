@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Bill</title>
+
+    <!-- CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <!-- Boxed bg -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- Template skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+    <style>
+        .bill-header, .bill-footer {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .bill-header h1, .bill-header h4, .bill-header h6 {
+            margin: 0;
+        }
+        .bill-details th, .bill-details td {
+            text-align: left;
+        }
+        .bill-section {
+            margin-bottom: 40px;
+        }
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6 !important;
+        }
+        .table thead th {
+            border-bottom: 2px solid #dee2e6;
+        }
+        .download-btn {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="bill-header text-center">
+            <h1>Bharat Hospital </h1>
+            <h4>Gandhinagar</h4>
+            <h6>Gujarat</h6>
+            <h6>+919428235545</h6>
+        </div>
+
+        <div class="bill-section">
+            <h2>Patient Details</h2>
+            <table class="table bill-details">
+                <tbody>
+                    <tr><th>Username:</th><td>{{ patient.username }}</td></tr>
+                    <tr><th>Email:</th><td>{{ patient.email }}</td></tr>
+                    <tr><th>First Name:</th><td>{{ patient.first_name }}</td></tr>
+                    <tr><th>Last Name:</th><td>{{ patient.last_name }}</td></tr>
+                    <tr><th>Phone Number:</th><td>{{ patient.phone_number }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bill-section">
+            <h2>Appointment Details</h2>
+            {% if appointments %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Department</th>
+                                <th scope="col">Doctor</th>
+                                <th scope="col">Symptoms</th>
+                                <th scope="col">Appointment Date</th>
+                                <th scope="col">Time Slot</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in appointments %}
+                            <tr>
+                                <td>{{ appointment.department }}</td>
+                                <td>{{ appointment.doctor.fname }} {{ appointment.doctor.lname }}</td>
+                                <td>{{ appointment.symptoms }}</td>
+                                <td>{{ appointment.date }}</td>
+                                <td>{{ appointment.time_slot }}</td>
+                                <td>{% if appointment.done %} Completed {% else %} Pending {% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    No appointment records found.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="bill-section">
+            <h2>Medication Details</h2>
+            {% if medications %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Description</th>
+                                <th scope="col">Medicine</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total Price</th>
+                                <th scope="col">Doctor</th>
+                                <th scope="col">Time Schedule</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for medication in medications %}
+                            <tr>
+                                <td>{{ medication.description }}</td>
+                                <td>{{ medication.medicine.name }}</td>
+                                <td>{{ medication.quantity }}</td>
+                                <td>{{ medication.total_price }}</td>
+                                <td>{{ medication.doctor.fname }} {{ medication.doctor.lname }}</td>
+                                <td>{{ medication.time_schedule }}</td>
+                                <td>{{ medication.schedule_date }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    No medication records found.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="download-btn">
+            <!-- <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button> -->
+            <a href="{% url 'medication_report_pdf' %}" class="btn btn-primary">Download Medication Report1 (PDF)</a>
+
+        </div>
+
+        <div class="bill-footer text-center">
+            <h6>Thank you for visiting our hospital. Get well soon!</h6>
+        </div>
+    </div>
+
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</body>
+</html>

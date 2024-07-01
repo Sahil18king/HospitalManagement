@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- existing head content -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Medicio landing page template for Health niche</title>
+
+    <!-- css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <!-- boxed bg -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- template skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .panel-skin {
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .booked {
+            color: #aaa;
+            background-color: #f8f8f8;
+            cursor: not-allowed;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#department').change(function () {
+                var department = $(this).val();
+                if (department) {
+                    $.ajax({
+                        url: '{% url "get_doctors_by_department" %}',
+                        data: { department: department },
+                        success: function (data) {
+                            $('#doctor').empty().append('<option value="">Select Doctor</option>');
+                            $.each(data, function (index, doctor) {
+                                $('#doctor').append('<option value="' + doctor.id + '">' + doctor.fname + ' ' + doctor.lname + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#doctor').empty().append('<option value="">Select Doctor</option>');
+                }
+            });
+
+            $('#date').change(function () {
+                var doctor = $('#doctor').val();
+                var date = $(this).val();
+                if (doctor && date) {
+                    $.ajax({
+                        url: '{% url "get_available_time_slots" %}',
+                        data: { doctor: doctor, date: date },
+                        success: function (data) {
+                            $('#time_slot').empty().append('<option value="">Select Time Slot</option>');
+                            $.each(data.available_slots, function (index, slot) {
+                                var option = $('<option></option>').val(slot).text(slot);
+                                if (data.booked_slots.includes(slot)) {
+                                    option.addClass('booked').attr('disabled', 'disabled');
+                                }
+                                $('#time_slot').append(option);
+                            });
+                        }
+                    });
+                } else {
+                    $('#time_slot').empty().append('<option value="">Select Time Slot</option>');
+                }
+            });
+
+            $('#appointment-form').submit(function (event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "appointment" %}',
+                    data: formData,
+                    success: function (response) {
+                        alert('Appointment request submitted successfully!');
+                        $('#appointment-form')[0].reset();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <div class="col-lg-6">
+        <div class="form-wrapper">
+            <div class="wow fadeInRight" data-wow-duration="2s" data-wow-delay="0.2s">
+                <div class="panel panel-skin">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="fa fa-pencil-square-o"></span> Make an appointment
+                            <small>(It's free!)</small>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <form id="appointment-form" role="form" method="post" action="{% url 'appointment' %}"
+                            class="lead">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Department</label>
+                                <select id="department" name="department" class="form-control">
+                                    <option value="">Select Department</option>
+                                    <option value="Pediatrician">Pediatrician</option>
+                                    <option value="Dermatologist">Dermatologist</option>
+                                    <option value="Radiologist">Radiologist</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Doctor</label>
+                                <select id="doctor" name="doctor" class="form-control">
+                                    <option value="">Select Doctor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="date" name="date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Time Slot</label>
+                                <select id="time_slot" name="time_slot" class="form-control">
+                                    <option value="">Select Time Slot</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" name="first_name" id="first_name"
+                                            class="form-control input-md" required>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" name="last_name" id="last_name" class="form-control input-md"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email" id="email" class="form-control input-md"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label>Phone number</label>
+                                        <input type="text" name="phone" id="phone" class="form-control input-md"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label>Symptoms</label>
+                                        <input type="text" name="symptoms" id="symptoms" class="form-control input-md"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="submit" value="Submit" class="btn btn-skin btn-block btn-lg">
+                            <p class="lead-footer">* We'll contact you by phone & email later</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

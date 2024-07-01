@@ -1,0 +1,117 @@
+Function to mark appointment as done and remove from view
+            function markAppointmentDone(appointmentId) {
+                $.ajax({
+                    url: '{% url "mark_appointment_done" %}',
+                    method: 'POST',
+                    data: {
+                        'appointment_id': appointmentId,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('#appointment-' + appointmentId).remove();  // Remove from view
+                            alert('Appointment marked as done and removed from view.');
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error marking appointment as done: ' + error);
+                    }
+                });
+            }
+
+
+
+
+
+
+
+
+
+
+
+            function markAsDone(appointmentId) {
+                if (confirm('Congratulations! You are helping our nation.')) {
+                    $.ajax({
+                        url: '{% url "mark_appointment_done" %}',
+                        method: 'POST',
+                        data: {
+                            'appointment_id': appointmentId,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                $('#appointment-' + appointmentId).remove();
+                            } else {
+                                alert(response.message);
+                            }
+                        }
+                    });
+                }
+            }
+
+
+
+
+            <script>
+                $(document).ready(function() {
+                    function updateTotalPrice(entry) {
+                        var quantity = parseInt(entry.find('.quantity').val());
+                        var price = parseFloat(entry.find('.medicine option:selected').data('price'));
+                        var totalPrice = quantity * price;
+        
+                        if (!isNaN(totalPrice)) {
+                            entry.find('.total-price').val(totalPrice.toFixed(2));
+                        } else {
+                            entry.find('.total-price').val('');
+                        }
+                    }
+        
+                    $(document).on('input', '.quantity', function() {
+                        var entry = $(this).closest('.medication-entry');
+                        updateTotalPrice(entry);
+                    });
+        
+                    $(document).on('change', '.medicine', function() {
+                        var entry = $(this).closest('.medication-entry');
+                        updateTotalPrice(entry);
+                    });
+        
+                    $('#add-medication').click(function() {
+                        var newEntry = $('.medication-entry:first').clone();
+                        newEntry.find('textarea, input').val('');
+                        newEntry.find('.total-price').val('');
+                        $('#medications-container').append(newEntry);
+                    });
+        
+                    $('.medication-entry').each(function() {
+                        updateTotalPrice($(this));
+                    });
+        
+                    
+        
+                    $('.btn-done').click(function() {
+                        var appointmentId = $(this).data('id');
+                        markAppointmentDone(appointmentId);
+                    });
+        
+                    $('#medication-form').submit(function(e) {
+                        e.preventDefault();
+                        var form = $(this);
+                        $.ajax({
+                            url: form.attr('action'),
+                            method: form.attr('method'),
+                            data: form.serialize(),
+                            success: function(response) {
+                                // Handle success response if needed
+                                alert('Medication details saved successfully.');
+                                window.location.href = '{% url "home" %}';  // Redirect to home after saving
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Error saving medication details: ' + error);
+                            }
+                        });
+                    });
+                });
+            </script>

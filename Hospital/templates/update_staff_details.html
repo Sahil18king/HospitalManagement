@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Staff Details</title>
+    <style>
+        .availability-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .day-container {
+            margin: 10px;
+        }
+        .time-slots label {
+            display: block;
+        }
+    </style>
+    <!-- css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <!-- boxed bg -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- template skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Update Staff Details</h2>
+        <form method="POST" action="{% url 'update_staff_details' %}">
+            {% csrf_token %}
+            <!-- Existing form fields here... -->
+            <!-- Hidden fields for dynamically added time slots -->
+            <input type="hidden" name="time_slots" id="time_slots">
+
+            <div class="form-group">
+                <label for="type">Type</label>
+                <input type="text" name="type" id="type" class="form-control" maxlength="150" value="{{ staff.type }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" class="form-control" maxlength="30" value="{{ staff.username }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" name="fname" id="fname" class="form-control" maxlength="20" value="{{ staff.fname }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" name="lname" id="lname" class="form-control" maxlength="20" value="{{ staff.lname }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control" maxlength="200" value="{{ staff.email }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="number">Number</label>
+                <input type="text" name="number" id="number" class="form-control" maxlength="10" value="{{ staff.number }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" name="department" id="department" class="form-control" maxlength="20" value="{{ staff.department }}" readonly>
+            </div>
+
+            <!-- Capacity -->
+            <div class="form-group">
+                <label for="capacity">Capacity per Hour</label>
+                <input type="number" name="capacity" id="capacity" class="form-control" value="{{ staff.capacity }}">
+            </div>
+
+            <!-- Availability -->
+            <div class="form-group">
+                <label for="availability">Availability</label>
+                <div class="availability-container">
+                    {% for day in days %}
+                    <div class="day-container">
+                        <strong>{{ day }}</strong><br>
+                        <div class="time-slots">
+                            {% for hour in hours %}
+                            {% with slot_value=day|add:":"|add:hour %}
+                            <label>
+                                <input type="checkbox" name="availability_{{ day }}" value="{{ hour }}" {% if slot_value in staff.availability %}checked{% endif %}>
+                                {{ hour }}:00
+                            </label>
+                            {% endwith %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Gender -->
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender" class="form-control" required>
+                    <option value="" disabled>Select Gender</option>
+                    <option value="Male" {% if staff.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if staff.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if staff.gender == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <!-- Medical License -->
+            <div class="form-group">
+                <label for="medical_license">Medical License</label>
+                <input type="text" name="medical_license" id="medical_license" class="form-control" maxlength="100" value="{{ staff.medical_license }}" required>
+            </div>
+
+            <!-- Specialization -->
+            <div class="form-group">
+                <label for="specialization">Specialization</label>
+                <input type="text" name="specialization" id="specialization" class="form-control" maxlength="100" value="{{ staff.specialization }}" required>
+            </div>
+
+            <!-- Experience -->
+            <div class="form-group">
+                <label for="experience">Experience (years)</label>
+                <input type="number" name="experience" id="experience" class="form-control" value="{{ staff.experience }}" required>
+            </div>
+
+            <!-- Medical School -->
+            <div class="form-group">
+                <label for="medical_school">Medical School</label>
+                <input type="text" name="medical_school" id="medical_school" class="form-control" maxlength="100" value="{{ staff.medical_school }}" required>
+            </div>
+
+            <!-- Graduation Year -->
+            <div class="form-group">
+                <label for="graduation_year">Graduation Year</label>
+                <input type="number" name="graduation_year" id="graduation_year" class="form-control" value="{{ staff.graduation_year }}" required>
+            </div>
+
+            <!-- Country -->
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" name="country" id="country" class="form-control" maxlength="100" value="{{ staff.country }}" required>
+            </div>
+
+            <!-- City -->
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" name="city" id="city" class="form-control" maxlength="100" value="{{ staff.city }}" required>
+            </div>
+
+            <!-- Languages -->
+            <div class="form-group">
+                <label for="languages">Languages</label>
+                <input type="text" name="languages" id="languages" class="form-control" maxlength="255" value="{{ staff.languages }}" required>
+            </div>
+
+            <!-- Publications -->
+            <div class="form-group">
+                <label for="publications">Publications</label>
+                <textarea name="publications" id="publications" class="form-control" rows="4">{{ staff.publications }}</textarea>
+            </div>
+
+            <!-- Awards -->
+            <div class="form-group">
+                <label for="awards">Awards</label>
+                <textarea name="awards" id="awards" class="form-control" rows="4">{{ staff.awards }}</textarea>
+            </div>
+
+            <!-- Hobbies -->
+            <div class="form-group">
+                <label for="hobbies">Hobbies</label>
+                <textarea name="hobbies" id="hobbies" class="form-control" rows="4">{{ staff.hobbies }}</textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Update Details</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- JavaScript to handle dynamic time slots -->
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            let timeSlots = {};
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(function(checkbox) {
+                let day = checkbox.name.replace('availability_', '');
+                if (!timeSlots[day]) {
+                    timeSlots[day] = [];
+                }
+                timeSlots[day].push(checkbox.value);
+            });
+            document.getElementById('time_slots').value = JSON.stringify(timeSlots);
+        });
+    </script>
+</body>
+</html>

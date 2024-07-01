@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Update Patient Details</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Include other CSS files as necessary -->
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Update Your Details</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">User Name:</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ patient.username }}">
+        </div>
+        <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ patient.first_name }}">
+        </div>
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ patient.last_name }}">
+        </div>
+        <div class="form-group">
+            <label for="blood_pressure">Blood Pressure:</label>
+            <input type="text" class="form-control" id="blood_pressure" name="blood_pressure" value="{{ patient.blood_pressure }}">
+        </div>
+        <div class="form-group">
+            <label for="sugar_level">Sugar Level:</label>
+            <input type="text" class="form-control" id="sugar_level" name="sugar_level" value="{{ patient.sugar_level }}">
+        </div>
+        <div class="form-group">
+            <label for="blood_group">Blood Group:</label>
+            <input type="text" class="form-control" id="blood_group" name="blood_group" value="{{ patient.blood_group }}">
+        </div>
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <input type="text" class="form-control" id="gender" name="gender" value="{{ patient.gender }}">
+        </div>
+        <div class="form-group">
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ patient.phone_number }}">
+        </div>
+        <div class="form-group">
+            <label for="weight">Weight:</label>
+            <input type="text" class="form-control" id="weight" name="weight" value="{{ patient.weight }}">
+        </div>
+        <div class="form-group">
+            <label for="height">Height:</label>
+            <input type="text" class="form-control" id="height" name="height" value="{{ patient.height }}">
+        </div>
+        <div class="form-group">
+            <label for="smoking_status">Smoking Status:</label>
+            <input type="text" class="form-control" id="smoking_status" name="smoking_status" value="{{ patient.smoking_status }}">
+        </div>
+        <div class="form-group">
+            <label for="alcohol_use">Alcohol Use:</label>
+            <input type="text" class="form-control" id="alcohol_use" name="alcohol_use" value="{{ patient.alcohol_use }}">
+        </div>
+        <div class="form-group">
+            <label for="has_insurance">Has Insurance:</label>
+            <input type="text" class="form-control" id="has_insurance" name="has_insurance" value="{{ patient.has_insurance }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+</body>
+</html>

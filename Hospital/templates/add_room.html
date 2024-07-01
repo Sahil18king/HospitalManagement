@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Room</title>
+    <!-- css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/cubeportfolio/css/cubeportfolio.min.css' %}">
+    <link href="{% static 'css/nivo-lightbox.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/nivo-lightbox-theme/default/default.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/owl.carousel.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/owl.theme.css' %}" rel="stylesheet" media="screen" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+    <!-- boxed bg -->
+    <link id="bodybg" href="{% static 'bodybg/bg1.css' %}" rel="stylesheet" type="text/css" />
+    <!-- template skin -->
+    <link id="t-colors" href="{% static 'color/default.css' %}" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Add Room</h1>
+        <form method="post" action="{% url 'add_room' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="type_of_room">Type of Room</label>
+                <select name="type_of_room" id="type_of_room" class="form-control">
+                    <option value="AC">AC Room</option>
+                    <option value="Non-AC">Non-AC Room</option>
+                    <option value="General">General Room</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" step="0.01" name="price" id="price" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" name="quantity" id="quantity" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Room</button>
+        </form>
+
+        <h2>Existing Rooms</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Type of Room</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Availability</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in rooms %}
+                    <tr>
+                        <td>{{ room.get_type_of_room_display }}</td>
+                        <td>{{ room.price }}</td>
+                        <td>{{ room.quantity }}</td>
+                        <td>{{ room.availability|yesno:"Yes,No" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
